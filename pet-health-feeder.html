@@ -154,6 +154,20 @@
     .logic { padding: 14px; border-radius: 15px; background: rgba(110,231,200,.055); border: 1px solid rgba(110,231,200,.14); } .logic strong { color: var(--mint-2); font-size: 12px; } .logic p { margin-top: 6px; color: #bdc9d8; font-size: 11px; line-height: 1.65; }
     .brief { margin-top: 12px; padding: 14px; border-radius: 15px; background: rgba(128,169,255,.06); border: 1px solid rgba(128,169,255,.15); color: #c7d6f9; font-size: 12px; line-height: 1.7; }
     .brief b { color: var(--blue); }
+    .model3d-panel { display: grid; grid-template-columns: minmax(260px, .95fr) minmax(240px, 1.05fr); gap: 16px; align-items: center; margin: 16px 0; padding: 15px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.025); }
+    .model3d-stage { min-height: 230px; display: grid; place-items: center; position: relative; overflow: hidden; border-radius: 15px; background: radial-gradient(circle at 50% 38%, rgba(110,231,200,.16), transparent 55%), rgba(0,0,0,.08); }
+    .model3d-stage::after { content: "拖动查看 3D 设备"; position: absolute; right: 12px; bottom: 10px; color: var(--muted); font-size: 10px; pointer-events: none; }
+    #feeder3d { display: block; width: 100%; max-width: 520px; height: 230px; cursor: grab; touch-action: none; }
+    #feeder3d:active { cursor: grabbing; }
+    .model3d-copy { padding: 4px 6px 4px 2px; }
+    .model3d-kicker { color: var(--mint); font-size: 10px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .model3d-copy h3 { margin-top: 8px; font-size: 17px; }
+    .model3d-copy p { margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.7; }
+    .model3d-parts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .model3d-parts span { padding: 5px 8px; border: 1px solid var(--line); border-radius: 99px; color: var(--muted); font-size: 10px; }
+    body[data-theme="warm"] .model3d-stage { background: radial-gradient(circle at 50% 38%, rgba(22,139,118,.15), transparent 55%), rgba(122,78,42,.06); }
+    body[data-theme="ops"] .model3d-stage { background: radial-gradient(circle at 50% 38%, rgba(16,101,199,.15), transparent 55%), rgba(24,71,113,.05); }
+    @media (max-width: 720px) { .model3d-panel { grid-template-columns: 1fr; } .model3d-stage { min-height: 210px; } }
     .pulse { animation: pulse .65s ease 2; } @keyframes pulse { 50% { transform: scale(1.035); filter: brightness(1.25); } }
     .feed-spin { animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
     @media (max-width: 1120px) { .dashboard { grid-template-columns: 1.1fr .9fr; } .log-panel { grid-column: 1 / -1; min-height: 280px; } .log-list { grid-template-columns: 1fr 1fr; } }
@@ -222,6 +236,10 @@
 
     <section class="panel blueprint" aria-labelledby="blueprintTitle">
       <div class="blueprint-head"><div><h2 class="panel-title" id="blueprintTitle">机器人蓝图 · 感知—决策—执行</h2><p>至少 3 个核心组件，支持 2 条可演示交互逻辑</p></div><span class="online"><i></i>活的原型</span></div>
+      <div class="model3d-panel" aria-label="宠物健康饮水喂食站三维模型">
+        <div class="model3d-stage"><canvas id="feeder3d" width="520" height="230" aria-label="可旋转的三维喂食站模型"></canvas></div>
+        <div class="model3d-copy"><div class="model3d-kicker">Interactive 3D model</div><h3>设备结构预览</h3><p>用立体模型展示粮仓、饮水箱和喂食碗的相对位置。模型会缓慢自动旋转，也可以拖动查看不同角度。</p><div class="model3d-parts"><span>粮仓</span><span>饮水箱</span><span>喂食碗</span><span>状态灯</span></div></div>
+      </div>
       <div class="flow">
         <div class="flow-card sensor"><div class="flow-type">01 · 传感器</div><div class="flow-name">水位 / 粮位 / 称重</div><div class="flow-desc">检测水箱余量、粮仓余量和每次进食重量。</div></div>
         <div class="arrow" aria-hidden="true">→</div>
@@ -281,6 +299,7 @@
       document.querySelectorAll('[data-theme-choice]').forEach(button => {
         button.setAttribute('aria-pressed', String(button.dataset.themeChoice === next));
       });
+      if (window.__redrawFeeder3d) window.__redrawFeeder3d();
     }
     applyTheme(new URLSearchParams(window.location.search).get('theme') || 'warm');
     document.querySelectorAll('[data-theme-choice]').forEach(button => {
@@ -289,6 +308,15 @@
         const url = new URL(window.location.href); url.searchParams.set('theme', button.dataset.themeChoice); window.history.replaceState({}, '', url);
       });
     });
+    function initFeeder3d() {
+      const canvas = $('feeder3d'); if (!canvas) return;
+      const ctx = canvas.getContext('2d'); let yaw = -.55; let pitch = .38; let dragging = false; let lastX = 0; let lastY = 0;
+      const point = (x, y, z) => { const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch); const x1 = x * cy - z * sy; const z1 = x * sy + z * cy; const y1 = y * cp - z1 * sp; const z2 = y * sp + z1 * cp; const scale = Math.min(canvas.width, canvas.height) * .105; return { x: canvas.width / 2 + x1 * scale, y: canvas.height * .69 - y1 * scale, z: z2 }; };
+      const box = (cx, cy, cz, w, h, d, colors) => { const v = [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(([x,y,z]) => point(cx + x*w/2, cy + y*h/2, cz + z*d/2)); const faces = [[0,1,2,3,colors.front],[1,5,6,2,colors.right],[4,0,3,7,colors.left],[3,2,6,7,colors.top],[0,4,5,1,colors.bottom],[4,7,6,5,colors.back]]; faces.sort((a,b) => a.slice(0,4).reduce((s,i)=>s+v[i].z,0) - b.slice(0,4).reduce((s,i)=>s+v[i].z,0)); faces.forEach(f => { ctx.beginPath(); f.slice(0,4).forEach((i,n) => n ? ctx.lineTo(v[i].x,v[i].y) : ctx.moveTo(v[i].x,v[i].y)); ctx.closePath(); ctx.fillStyle = f[4]; ctx.fill(); ctx.strokeStyle = 'rgba(45,30,20,.18)'; ctx.lineWidth = 1.2; ctx.stroke(); }); };
+      function draw() { const warm = document.body.dataset.theme === 'warm'; const ops = document.body.dataset.theme === 'ops'; const body = warm ? '#d7b18f' : ops ? '#b8cfe3' : '#383840'; const top = warm ? '#b9855b' : ops ? '#91aec9' : '#555563'; const dark = warm ? '#ad7950' : ops ? '#7895b1' : '#24242b'; const bowl = warm ? '#f0d2b2' : ops ? '#dcecf8' : '#656572'; const accent = getComputedStyle(document.body).getPropertyValue('--mint').trim() || '#6ee7c8'; ctx.clearRect(0,0,canvas.width,canvas.height); const shadow = point(0,0,-.1); ctx.save(); ctx.globalAlpha=.15; ctx.fillStyle='#3d2a1e'; ctx.beginPath(); ctx.ellipse(shadow.x, canvas.height*.82, 145, 18, 0, 0, Math.PI*2); ctx.fill(); ctx.restore(); box(0,1.02,0,3.8,2.05,2.2,{front:body,right:dark,left:body,top:top,bottom:dark,back:dark}); box(0,2.42,0,2.65,.75,1.55,{front:top,right:dark,left:top,top:'#e2c19e',bottom:dark,back:dark}); box(1.25,1.82,.08,.72,1.18,1.22,{front:'#b9dfe0',right:'#7aa9ac',left:'#c8e8e7',top:'#e3f6f2',bottom:'#6e999b',back:'#8dbaba'}); const rim=[]; for(let i=0;i<28;i++){ const a=Math.PI*2*i/28; rim.push(point(-.72+Math.cos(a)*.82,.25,-1.18+Math.sin(a)*.5)); } ctx.beginPath(); rim.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.closePath(); ctx.fillStyle=bowl; ctx.fill(); ctx.strokeStyle='rgba(45,30,20,.24)'; ctx.stroke(); const inner=[]; for(let i=0;i<28;i++){ const a=Math.PI*2*i/28; inner.push(point(-.72+Math.cos(a)*.62,.31,-1.2+Math.sin(a)*.37)); } ctx.beginPath(); inner.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.closePath(); ctx.fillStyle=warm?'#c9a27c':ops?'#9fc6df':'#464650'; ctx.fill(); const led=point(0,1.6,-1.13); ctx.beginPath(); ctx.arc(led.x,led.y,5,0,Math.PI*2); ctx.fillStyle=accent; ctx.shadowColor=accent; ctx.shadowBlur=12; ctx.fill(); ctx.shadowBlur=0; }
+      window.__redrawFeeder3d = draw; canvas.addEventListener('pointerdown', e => { dragging=true; lastX=e.clientX; lastY=e.clientY; canvas.setPointerCapture(e.pointerId); }); canvas.addEventListener('pointermove', e => { if(!dragging) return; yaw += (e.clientX-lastX)*.012; pitch = Math.max(-.15,Math.min(.9,pitch+(e.clientY-lastY)*.009)); lastX=e.clientX; lastY=e.clientY; draw(); }); canvas.addEventListener('pointerup', () => { dragging=false; }); canvas.addEventListener('pointercancel', () => { dragging=false; }); setInterval(() => { if(!dragging) { yaw += .008; draw(); } }, 40); draw();
+    }
+    initFeeder3d();
     render();
   </script>
 </body>
