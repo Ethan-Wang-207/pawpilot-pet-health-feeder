@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PawPilot｜宠物健康饮水喂食站</title>
+  <style>
+    :root {
+      --bg: #0a0d12;
+      --panel: #121720;
+      --panel-2: #171e2a;
+      --line: rgba(255,255,255,.10);
+      --text: #f4f7fb;
+      --muted: #8d99aa;
+      --mint: #6ee7c8;
+      --mint-2: #b7ffed;
+      --blue: #80a9ff;
+      --amber: #ffc86b;
+      --red: #ff7c89;
+      --shadow: 0 24px 70px rgba(0,0,0,.28);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 80% 0%, rgba(76,127,255,.14), transparent 28rem),
+        radial-gradient(circle at 0% 90%, rgba(110,231,200,.10), transparent 32rem),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .shell { width: min(1420px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 42px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+    .brand { display: flex; align-items: center; gap: 13px; }
+    .brand-mark { width: 45px; height: 45px; display: grid; place-items: center; border-radius: 15px; background: linear-gradient(135deg, var(--mint), #4d86ff); color: #071015; font-size: 24px; box-shadow: 0 10px 30px rgba(110,231,200,.18); }
+    .eyebrow { margin: 0 0 4px; color: var(--mint); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(21px, 2.2vw, 30px); letter-spacing: -.04em; }
+    .brand-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .online { display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid rgba(110,231,200,.25); border-radius: 99px; color: var(--mint-2); background: rgba(110,231,200,.08); font-size: 12px; white-space: nowrap; }
+    .online i { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 5px rgba(110,231,200,.11); }
+    .top-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+    .theme-switcher { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.035); }
+    .theme-switcher button { min-height: 28px; padding: 0 8px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); cursor: pointer; font-size: 10px; }
+    .theme-switcher button:hover, .theme-switcher button[aria-pressed="true"] { color: var(--text); background: rgba(255,255,255,.10); }
+    body[data-theme="shadcn"] { --bg: #09090b; --panel: #18181b; --panel-2: #27272a; --line: rgba(255,255,255,.12); --text: #fafafa; --muted: #a1a1aa; --mint: #a78bfa; --mint-2: #ddd6fe; --blue: #93c5fd; --amber: #facc15; --red: #fb7185; --shadow: 0 24px 70px rgba(0,0,0,.34); }
+    body[data-theme="shadcn"] .panel { background: linear-gradient(145deg, rgba(24,24,27,.98), rgba(17,17,20,.98)); }
+    body[data-theme="shadcn"] .station-body { background: linear-gradient(145deg, #303038, #17171b); }
+    body[data-theme="shadcn"] .station-top { background: linear-gradient(180deg, #4a4a55, #28282e); }
+    body[data-theme="shadcn"] .btn { background: #27272a; }
+    body[data-theme="shadcn"] .btn.primary { color: #16111f; background: var(--mint); }
+    body[data-theme="shadcn"] .btn.warn { color: #24140a; background: var(--amber); border-color: var(--amber); }
+    body[data-theme="shadcn"] .theme-switcher button[aria-pressed="true"] { background: rgba(167,139,250,.18); }
+    body[data-theme="warm"] { --bg: #f8f3ec; --panel: #fffdf9; --panel-2: #f5ede4; --line: rgba(88,63,42,.14); --text: #2f241b; --muted: #8e7a68; --mint: #168b76; --mint-2: #0b6b5b; --blue: #6e88b4; --amber: #c97831; --red: #c94d5b; --shadow: 0 22px 58px rgba(104,72,39,.12); }
+    body[data-theme="warm"] { background: radial-gradient(circle at 90% 0%, rgba(245,191,125,.32), transparent 28rem), radial-gradient(circle at 0% 90%, rgba(131,204,174,.25), transparent 32rem), var(--bg); }
+    body[data-theme="warm"] .panel { background: linear-gradient(145deg, rgba(255,253,249,.98), rgba(250,245,238,.98)); }
+    body[data-theme="warm"] .station-body { background: linear-gradient(145deg, #e8d3be, #c39a76); border-color: rgba(91,59,34,.17); }
+    body[data-theme="warm"] .station-top { background: linear-gradient(180deg, #d9baa0, #b88861); border-color: rgba(91,59,34,.16); }
+    body[data-theme="warm"] .station-face { border-color: rgba(91,59,34,.16); }
+    body[data-theme="warm"] .sensor-card, body[data-theme="warm"] .flow-card { background: rgba(95,63,35,.035); }
+    body[data-theme="warm"] .ambient { border-color: rgba(91,59,34,.16); }
+    body[data-theme="warm"] .ambient::before, body[data-theme="warm"] .ambient::after { border-color: rgba(22,139,118,.16); }
+    body[data-theme="warm"] .sensor-name { color: var(--text); }
+    body[data-theme="warm"] .log-copy { color: #5f4b3a; }
+    body[data-theme="warm"] .logic { background: rgba(22,139,118,.055); border-color: rgba(22,139,118,.18); }
+    body[data-theme="warm"] .logic p { color: #6f5a47; }
+    body[data-theme="warm"] .brief { color: #536c88; background: rgba(110,136,180,.08); border-color: rgba(110,136,180,.20); }
+    body[data-theme="warm"] .btn { background: #fffaf3; color: var(--text); }
+    body[data-theme="warm"] .btn.primary { color: #fffdf9; background: var(--mint); }
+    body[data-theme="warm"] .btn.warn { color: #fffaf3; background: var(--amber); border-color: var(--amber); }
+    body[data-theme="warm"] .theme-switcher { background: rgba(122,78,42,.04); }
+    body[data-theme="warm"] .theme-switcher button:hover, body[data-theme="warm"] .theme-switcher button[aria-pressed="true"] { background: rgba(22,139,118,.12); }
+    body[data-theme="ops"] { --bg: #eef3f8; --panel: #ffffff; --panel-2: #f5f8fb; --line: rgba(23,53,83,.13); --text: #172b40; --muted: #6d7e90; --mint: #1065c7; --mint-2: #0c4b94; --blue: #4c79c9; --amber: #c77813; --red: #bf3349; --shadow: 0 24px 60px rgba(40,72,107,.12); }
+    body[data-theme="ops"] { background: linear-gradient(135deg, #f7faff, #eaf1f7); }
+    body[data-theme="ops"] .panel { background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(246,249,252,.98)); }
+    body[data-theme="ops"] .station-body { background: linear-gradient(145deg, #dbe8f4, #b7ccdf); border-color: rgba(23,53,83,.16); }
+    body[data-theme="ops"] .station-top { background: linear-gradient(180deg, #c6d8ea, #a5bed5); border-color: rgba(23,53,83,.16); }
+    body[data-theme="ops"] .sensor-card, body[data-theme="ops"] .flow-card { background: rgba(24,71,113,.035); }
+    body[data-theme="ops"] .btn { background: #f8fbff; color: var(--text); }
+    body[data-theme="ops"] .btn.primary { color: #fff; background: var(--mint); }
+    body[data-theme="ops"] .btn.warn { color: #fff; background: var(--amber); border-color: var(--amber); }
+    body[data-theme="ops"] .theme-switcher { background: rgba(24,71,113,.04); }
+    body[data-theme="ops"] .theme-switcher button:hover, body[data-theme="ops"] .theme-switcher button[aria-pressed="true"] { background: rgba(16,101,199,.11); }
+    .dashboard { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(315px, .82fr) minmax(260px, .62fr); gap: 16px; align-items: stretch; }
+    .panel { background: linear-gradient(145deg, rgba(23,30,42,.97), rgba(15,20,29,.97)); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 19px 20px 0; }
+    .panel-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+    .panel-meta { color: var(--muted); font-size: 11px; }
+    .hero { min-height: 520px; overflow: hidden; position: relative; }
+    .hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(125deg, rgba(110,231,200,.06), transparent 40%, rgba(128,169,255,.06)); pointer-events: none; }
+    .hero-main { min-height: 362px; display: grid; place-items: center; position: relative; padding: 38px 24px 22px; }
+    .ambient { position: absolute; inset: 36px 26px 18px; border: 1px dashed rgba(255,255,255,.11); border-radius: 24px; }
+    .ambient::before, .ambient::after { content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(110,231,200,.13); }
+    .ambient::before { width: 260px; height: 260px; top: 40px; left: 50%; transform: translateX(-50%); }
+    .ambient::after { width: 410px; height: 410px; top: -34px; left: 50%; transform: translateX(-50%); }
+    .station { width: min(490px, 92%); position: relative; z-index: 1; filter: drop-shadow(0 30px 30px rgba(0,0,0,.28)); }
+    .station-top { width: 230px; height: 36px; margin: 0 auto -7px; border-radius: 20px 20px 10px 10px; background: linear-gradient(180deg, #334256, #1d2734); border: 1px solid rgba(255,255,255,.16); box-shadow: inset 0 2px 0 rgba(255,255,255,.08); }
+    .station-body { display: grid; grid-template-columns: 1.05fr .95fr; gap: 0; min-height: 190px; padding: 24px; border-radius: 30px; background: linear-gradient(145deg, #283647, #131b27); border: 1px solid rgba(255,255,255,.16); }
+    .station-face { display: grid; place-items: center; border-right: 1px solid rgba(255,255,255,.10); }
+    .pet-face { width: 132px; height: 105px; position: relative; border-radius: 45% 45% 42% 42%; background: linear-gradient(145deg, #d7b28f, #a97850); box-shadow: inset 0 -13px 0 rgba(77,44,28,.15); }
+    .pet-face::before, .pet-face::after { content: ""; position: absolute; top: -16px; width: 43px; height: 46px; background: #b4835a; z-index: -1; }
+    .pet-face::before { left: 5px; transform: rotate(-24deg); border-radius: 4px 28px 4px 28px; }
+    .pet-face::after { right: 5px; transform: rotate(24deg); border-radius: 28px 4px 28px 4px; }
+    .eye { position: absolute; top: 42px; width: 13px; height: 17px; border-radius: 50%; background: #161922; }
+    .eye::after { content: ""; position: absolute; width: 4px; height: 4px; top: 3px; left: 3px; border-radius: 50%; background: white; }
+    .eye.left { left: 34px; } .eye.right { right: 34px; }
+    .nose { position: absolute; top: 67px; left: 50%; width: 17px; height: 12px; transform: translateX(-50%); border-radius: 50% 50% 60% 60%; background: #4a2a24; }
+    .smile { position: absolute; left: 50%; top: 77px; width: 29px; height: 13px; transform: translateX(-50%); border-bottom: 2px solid #4a2a24; border-radius: 0 0 20px 20px; }
+    .station-bay { display: grid; align-content: center; gap: 13px; padding-left: 22px; }
+    .bay-label { color: var(--muted); font-size: 11px; }
+    .bay-value { font-size: 30px; font-weight: 800; letter-spacing: -.07em; }
+    .bay-value small { font-size: 12px; color: var(--muted); letter-spacing: 0; }
+    .status-strip { display: flex; justify-content: space-between; align-items: center; padding: 12px 17px; margin-top: 14px; border-radius: 14px; background: rgba(110,231,200,.08); border: 1px solid rgba(110,231,200,.16); }
+    .status-strip.warn { background: rgba(255,124,137,.10); border-color: rgba(255,124,137,.27); }
+    .status-text { color: var(--mint-2); font-size: 12px; } .warn .status-text { color: #ffb0b9; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); } .warn .status-dot { background: var(--red); box-shadow: 0 0 0 5px rgba(255,124,137,.10); }
+    .hero-bottom { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
+    .hero-stat { padding: 17px 18px; border-right: 1px solid var(--line); } .hero-stat:last-child { border-right: 0; }
+    .hero-stat-label { color: var(--muted); font-size: 11px; margin-bottom: 7px; } .hero-stat-value { font-size: 19px; font-weight: 750; }
+    .sensor-panel { padding-bottom: 17px; }
+    .sensor-list { padding: 17px 18px 0; display: grid; gap: 12px; }
+    .sensor-card { padding: 14px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.025); }
+    .sensor-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .sensor-name { display: flex; align-items: center; gap: 9px; color: #dce5ef; font-size: 12px; } .sensor-icon { color: var(--mint); font-size: 16px; }
+    .sensor-num { font-size: 17px; font-weight: 750; } .sensor-unit { color: var(--muted); font-size: 11px; margin-left: 2px; }
+    .meter { height: 6px; margin-top: 12px; overflow: hidden; border-radius: 10px; background: #27303c; } .meter > span { display: block; height: 100%; width: 78%; border-radius: inherit; background: linear-gradient(90deg, var(--mint), #5cc5ff); transition: width .4s ease, background .3s ease; }
+    .meter.food > span { background: linear-gradient(90deg, var(--amber), #ff9c67); }
+    .sensor-foot { display: flex; justify-content: space-between; margin-top: 8px; color: var(--muted); font-size: 10px; }
+    .control-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 17px 18px 0; }
+    .btn { min-height: 38px; padding: 0 13px; border: 1px solid var(--line); border-radius: 11px; background: #1c2532; cursor: pointer; transition: transform .15s ease, background .15s ease, border-color .15s ease; font-size: 12px; }
+    .btn:hover { transform: translateY(-1px); background: #253142; border-color: rgba(255,255,255,.22); } .btn:active { transform: translateY(1px); }
+    .btn:focus-visible, .theme-switcher button:focus-visible, .toggle input:focus-visible { outline: 3px solid color-mix(in srgb, var(--mint) 55%, transparent); outline-offset: 2px; }
+    .btn:disabled { cursor: wait; opacity: .62; transform: none; }
+    .btn.primary { color: #06130f; background: var(--mint); border-color: var(--mint); font-weight: 800; } .btn.primary:hover { background: var(--mint-2); }
+    .btn.warn { color: #24140a; background: var(--amber); border-color: var(--amber); font-weight: 750; }
+    .toggle { display: flex; align-items: center; gap: 8px; margin: 13px 18px 0; color: var(--muted); font-size: 11px; } .toggle input { accent-color: var(--mint); }
+    .log-panel { min-height: 520px; display: flex; flex-direction: column; overflow: hidden; }
+    .log-body { padding: 17px 18px; flex: 1; }
+    .log-list { display: grid; gap: 12px; }
+    .log-item { display: grid; grid-template-columns: 42px 1fr; gap: 10px; align-items: start; }
+    .log-time { color: var(--muted); font-size: 10px; padding-top: 2px; } .log-copy { position: relative; padding-left: 14px; color: #d3dce8; font-size: 11px; line-height: 1.6; } .log-copy::before { content: ""; position: absolute; top: 7px; left: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--mint); } .log-copy.warn::before { background: var(--red); }
+    .empty-log { color: var(--muted); font-size: 12px; padding: 30px 0; text-align: center; }
+    .blueprint { margin-top: 16px; padding: 20px; }
+    .blueprint-head { display: flex; justify-content: space-between; align-items: end; gap: 15px; margin-bottom: 16px; } .blueprint-head p { color: var(--muted); font-size: 11px; }
+    .flow { display: grid; grid-template-columns: 1fr 48px 1fr 48px 1fr; gap: 10px; align-items: center; }
+    .flow-card { min-height: 118px; padding: 16px; border-radius: 17px; border: 1px solid var(--line); background: rgba(255,255,255,.025); } .flow-card.sensor { border-color: rgba(128,169,255,.28); } .flow-card.controller { border-color: rgba(255,200,107,.3); } .flow-card.action { border-color: rgba(110,231,200,.3); }
+    .flow-type { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; font-weight: 800; } .sensor .flow-type { color: var(--blue); } .controller .flow-type { color: var(--amber); } .action .flow-type { color: var(--mint); }
+    .flow-name { margin-top: 10px; font-size: 15px; font-weight: 750; } .flow-desc { margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .arrow { color: var(--muted); text-align: center; font-size: 22px; }
+    .logic-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .logic { padding: 14px; border-radius: 15px; background: rgba(110,231,200,.055); border: 1px solid rgba(110,231,200,.14); } .logic strong { color: var(--mint-2); font-size: 12px; } .logic p { margin-top: 6px; color: #bdc9d8; font-size: 11px; line-height: 1.65; }
+    .brief { margin-top: 12px; padding: 14px; border-radius: 15px; background: rgba(128,169,255,.06); border: 1px solid rgba(128,169,255,.15); color: #c7d6f9; font-size: 12px; line-height: 1.7; }
+    .brief b { color: var(--blue); }
+    .pulse { animation: pulse .65s ease 2; } @keyframes pulse { 50% { transform: scale(1.035); filter: brightness(1.25); } }
+    .feed-spin { animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 1120px) { .dashboard { grid-template-columns: 1.1fr .9fr; } .log-panel { grid-column: 1 / -1; min-height: 280px; } .log-list { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 720px) { .shell { width: min(100% - 24px, 560px); padding-top: 18px; } .topbar { align-items: stretch; flex-direction: column; gap: 14px; } .top-actions { justify-content: space-between; } .dashboard { grid-template-columns: 1fr; } .hero { min-height: 465px; } .log-panel { grid-column: auto; min-height: 330px; } .log-list { grid-template-columns: 1fr; } .flow { grid-template-columns: 1fr; } .arrow { transform: rotate(90deg); height: 20px; } .logic-row { grid-template-columns: 1fr; } .hero-bottom { grid-template-columns: 1fr; } .hero-stat { border-right: 0; border-bottom: 1px solid var(--line); } .hero-stat:last-child { border-bottom: 0; } .control-row .btn { flex: 1 1 calc(50% - 8px); min-width: 0; } }
+  </style>
+</head>
+<body>
+  <main class="shell" id="petStationApp">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">🐾</div>
+        <div>
+          <p class="eyebrow">PawPilot · AIoT Prototype</p>
+          <h1>宠物健康饮水喂食站</h1>
+          <p class="brand-sub">让主人不在家，也能看见每一次喝水与进食</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="theme-switcher" aria-label="选择界面风格">
+          <button type="button" data-theme-choice="mint" aria-pressed="false">薄荷</button>
+          <button type="button" data-theme-choice="shadcn" aria-pressed="false">极简</button>
+          <button type="button" data-theme-choice="warm" aria-pressed="true">暖宠</button>
+          <button type="button" data-theme-choice="ops" aria-pressed="false">运营</button>
+        </div>
+        <div class="online"><i></i><span id="connectionText">设备在线 · 自动模式</span></div>
+      </div>
+    </header>
+
+    <section class="dashboard" aria-label="宠物健康喂食站控制台">
+      <section class="panel hero" aria-labelledby="heroTitle">
+        <div class="panel-head"><div><h2 class="panel-title" id="heroTitle">实时设备视图</h2><span class="panel-meta">MOMO · 橘猫 · 4.8 kg</span></div><span class="panel-meta" id="updatedAt">刚刚更新</span></div>
+        <div class="hero-main">
+          <div class="ambient" aria-hidden="true"></div>
+          <div class="station" id="stationVisual">
+            <div class="station-top"></div>
+            <div class="station-body">
+              <div class="station-face"><div class="pet-face" aria-label="橘猫头像"><span class="eye left"></span><span class="eye right"></span><span class="nose"></span><span class="smile"></span></div></div>
+              <div class="station-bay"><div class="bay-label">下一次定时投喂</div><div class="bay-value" id="nextFeed">18:30 <small>· 还有 42 分钟</small></div><div class="bay-label">今日计划 <b id="mealPlan">2 / 3</b> 次已完成</div></div>
+            </div>
+            <div class="status-strip" id="statusStrip"><span class="status-text" id="statusText">状态正常 · 水粮充足</span><span class="status-dot"></span></div>
+          </div>
+        </div>
+        <div class="hero-bottom">
+          <div class="hero-stat"><div class="hero-stat-label">今日饮水量</div><div class="hero-stat-value" id="waterToday">186 <span class="panel-meta">ml</span></div></div>
+          <div class="hero-stat"><div class="hero-stat-label">最近一次进食</div><div class="hero-stat-value" id="lastMeal">12:30 <span class="panel-meta">正常</span></div></div>
+          <div class="hero-stat"><div class="hero-stat-label">设备状态评分</div><div class="hero-stat-value" id="healthScore">98 <span class="panel-meta">/ 100</span></div></div>
+        </div>
+      </section>
+
+      <section class="panel sensor-panel" aria-labelledby="sensorTitle">
+        <div class="panel-head"><div><h2 class="panel-title" id="sensorTitle">传感器数据</h2><span class="panel-meta">实时采样 · 每 30 秒</span></div><span class="panel-meta">3 个核心输入</span></div>
+        <div class="sensor-list">
+          <div class="sensor-card"><div class="sensor-card-top"><div class="sensor-name"><span class="sensor-icon">◉</span>饮水水位传感器</div><div><span class="sensor-num" id="waterLevel">78</span><span class="sensor-unit">%</span></div></div><div class="meter"><span id="waterBar" style="width:78%"></span></div><div class="sensor-foot"><span>安全阈值 ≥ 30%</span><span id="waterLabel">充足</span></div></div>
+          <div class="sensor-card"><div class="sensor-card-top"><div class="sensor-name"><span class="sensor-icon">◒</span>粮仓余量传感器</div><div><span class="sensor-num" id="foodLevel">64</span><span class="sensor-unit">%</span></div></div><div class="meter food"><span id="foodBar" style="width:64%"></span></div><div class="sensor-foot"><span>预计可用 2.1 天</span><span id="foodLabel">正常</span></div></div>
+          <div class="sensor-card"><div class="sensor-card-top"><div class="sensor-name"><span class="sensor-icon">⌁</span>碗底称重传感器</div><div><span class="sensor-num" id="weightLevel">42</span><span class="sensor-unit">g</span></div></div><div class="meter"><span id="weightBar" style="width:42%"></span></div><div class="sensor-foot"><span>最近进食 12:30</span><span id="intakeLabel">正常摄入</span></div></div>
+        </div>
+        <div class="control-row" aria-label="设备控制"><button class="btn primary" id="feedBtn" type="button">立即投喂</button><button class="btn" id="waterBtn" type="button">自动补水</button><button class="btn warn" id="lowWaterBtn" type="button">模拟缺水</button><button class="btn" id="abnormalBtn" type="button">模拟摄入异常</button></div>
+        <label class="toggle"><input type="checkbox" id="autoToggle" checked /> 自动监测与异常提醒已开启</label>
+      </section>
+
+      <section class="panel log-panel" aria-labelledby="logTitle">
+        <div class="panel-head"><div><h2 class="panel-title" id="logTitle">事件日志</h2><span class="panel-meta">主控决策记录</span></div><span class="panel-meta" id="eventCount">4 条</span></div>
+        <div class="log-body"><div class="log-list" id="logList"></div></div>
+      </section>
+    </section>
+
+    <section class="panel blueprint" aria-labelledby="blueprintTitle">
+      <div class="blueprint-head"><div><h2 class="panel-title" id="blueprintTitle">机器人蓝图 · 感知—决策—执行</h2><p>至少 3 个核心组件，支持 2 条可演示交互逻辑</p></div><span class="online"><i></i>活的原型</span></div>
+      <div class="flow">
+        <div class="flow-card sensor"><div class="flow-type">01 · 传感器</div><div class="flow-name">水位 / 粮位 / 称重</div><div class="flow-desc">检测水箱余量、粮仓余量和每次进食重量。</div></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="flow-card controller"><div class="flow-type">02 · 主控决策</div><div class="flow-name">健康状态引擎</div><div class="flow-desc">按时间表投喂，并判断缺水、断粮与摄入异常。</div></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="flow-card action"><div class="flow-type">03 · 行动装置</div><div class="flow-name">喂食电机 / 饮水泵</div><div class="flow-desc">自动落粮、补水，状态灯与手机日志同步反馈。</div></div>
+      </div>
+      <div class="logic-row">
+        <div class="logic"><strong>交互 1｜定时投喂</strong><p>点击“立即投喂”后，主控启动喂食电机，粮仓余量下降，今日计划和事件日志同步更新。</p></div>
+        <div class="logic"><strong>交互 2｜缺水 / 异常提醒</strong><p>点击“模拟缺水”或“模拟摄入异常”，系统切换为告警状态；点击“自动补水”即可恢复正常。</p></div>
+      </div>
+      <div class="brief"><b>100 字内说明：</b>宠物健康饮水喂食站通过水位、粮位和称重传感器监测宠物饮食，主控按计划启动喂食电机与饮水泵；缺水、断粮或摄入异常时，设备亮灯并向主人提醒，支持远程补水和加餐。</div>
+    </section>
+  </main>
+
+  <script>
+    const app = document.getElementById('petStationApp');
+    const state = { water: 78, food: 64, weight: 42, meals: 2, waterToday: 186, abnormal: false, feeding: false, logs: [
+      { time: '12:30', text: '完成第 2 次定时投喂，摄入 42g', warn: false },
+      { time: '12:31', text: '饮水量 68ml，处于健康区间', warn: false },
+      { time: '09:00', text: '完成第 1 次定时投喂，摄入 46g', warn: false },
+      { time: '08:00', text: '系统自检完成，水泵与喂食电机在线', warn: false }
+    ]};
+    const $ = (id) => document.getElementById(id);
+    const now = () => new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+    function addLog(text, warn = false) { state.logs.unshift({ time: now(), text, warn }); state.logs = state.logs.slice(0, 8); }
+    function renderLogs() {
+      $('logList').innerHTML = state.logs.map(item => `<div class="log-item"><div class="log-time">${item.time}</div><div class="log-copy${item.warn ? ' warn' : ''}">${item.text}</div></div>`).join('');
+      $('eventCount').textContent = `${state.logs.length} 条`;
+    }
+    function render() {
+      $('waterLevel').textContent = state.water; $('waterBar').style.width = `${state.water}%`; $('waterToday').innerHTML = `${state.waterToday} <span class="panel-meta">ml</span>`;
+      $('foodLevel').textContent = state.food; $('foodBar').style.width = `${state.food}%`;
+      $('weightLevel').textContent = state.weight; $('weightBar').style.width = `${Math.min(100, state.weight * 2)}%`;
+      $('mealPlan').textContent = `${Math.min(state.meals, 3)} / 3`; $('lastMeal').innerHTML = `${state.meals >= 3 ? now() : '12:30'} <span class="panel-meta">${state.abnormal ? '需关注' : '正常'}</span>`;
+      $('waterLabel').textContent = state.water < 30 ? '偏低' : '充足'; $('foodLabel').textContent = state.food < 20 ? '需补粮' : '正常'; $('intakeLabel').textContent = state.abnormal ? '偏低 · 需关注' : '正常摄入';
+      const alert = state.water < 30 || state.food < 20 || state.abnormal;
+      $('statusStrip').classList.toggle('warn', alert); $('statusText').textContent = state.water < 30 ? '注意 · 饮水不足，请补水' : state.food < 20 ? '注意 · 粮仓余量不足' : state.abnormal ? '注意 · 进食量异常，已提醒主人' : '状态正常 · 水粮充足';
+      $('healthScore').innerHTML = `${alert ? 82 : 98} <span class="panel-meta">/ 100</span>`;
+      $('connectionText').textContent = `设备在线 · ${$('autoToggle').checked ? '自动模式' : '手动模式'}`;
+      renderLogs();
+    }
+    function pulse(target) { target.classList.remove('pulse'); void target.offsetWidth; target.classList.add('pulse'); }
+    $('feedBtn').addEventListener('click', () => {
+      if (state.feeding) return;
+      state.feeding = true; $('feedBtn').disabled = true; $('feedBtn').textContent = '投喂中…'; addLog('主控发出投喂指令，喂食电机启动'); render(); pulse($('stationVisual'));
+      setTimeout(() => { state.food = Math.max(0, state.food - 8); state.weight = 42; state.meals += 1; state.feeding = false; $('feedBtn').disabled = false; $('feedBtn').textContent = '立即投喂'; addLog(`完成第 ${state.meals} 次投喂，记录摄入 ${state.weight}g`); render(); }, 1100);
+    });
+    $('waterBtn').addEventListener('click', () => { state.water = 100; state.waterToday += 12; state.abnormal = false; addLog('饮水泵启动，水箱已补满至 100%'); render(); pulse($('waterBar')); });
+    $('lowWaterBtn').addEventListener('click', () => { state.water = 18; addLog('饮水水位低于阈值，已向主人发送提醒', true); render(); pulse($('statusStrip')); });
+    $('abnormalBtn').addEventListener('click', () => { state.abnormal = !state.abnormal; state.weight = state.abnormal ? 12 : 42; addLog(state.abnormal ? '检测到进食量偏低，进入观察状态' : '摄入量恢复正常，解除观察状态', state.abnormal); render(); pulse($('stationVisual')); });
+    $('autoToggle').addEventListener('change', () => { addLog($('autoToggle').checked ? '自动监测与异常提醒已开启' : '已切换为手动模式'); render(); });
+    const validThemes = ['mint', 'shadcn', 'warm', 'ops'];
+    function applyTheme(theme) {
+      const next = validThemes.includes(theme) ? theme : 'mint';
+      document.body.dataset.theme = next;
+      document.querySelectorAll('[data-theme-choice]').forEach(button => {
+        button.setAttribute('aria-pressed', String(button.dataset.themeChoice === next));
+      });
+    }
+    applyTheme(new URLSearchParams(window.location.search).get('theme') || 'warm');
+    document.querySelectorAll('[data-theme-choice]').forEach(button => {
+      button.addEventListener('click', () => {
+        applyTheme(button.dataset.themeChoice);
+        const url = new URL(window.location.href); url.searchParams.set('theme', button.dataset.themeChoice); window.history.replaceState({}, '', url);
+      });
+    });
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PawPilot · 主题方案对比</title>
+  <style>
+    :root { color-scheme: dark; --bg: #0b1017; --ink: #edf3f8; --muted: #97a6b5; --line: rgba(255,255,255,.12); --accent: #6ee7c8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Microsoft YaHei", sans-serif; }
+    main { width: min(1480px, calc(100% - 40px)); margin: 0 auto; padding: 38px 0 56px; }
+    header { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 28px; }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: clamp(26px, 3.3vw, 44px); letter-spacing: -.045em; }
+    .eyebrow { margin-bottom: 8px; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    .intro { max-width: 500px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: #111822; }
+    figure img { display: block; width: 100%; height: auto; aspect-ratio: 1.4; object-fit: cover; object-position: top; background: #151b24; }
+    figcaption { padding: 16px 17px 18px; }
+    .label { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+    h2 { font-size: 16px; }
+    .fit { color: var(--accent); font-size: 11px; font-weight: 750; white-space: nowrap; }
+    figcaption p { margin-top: 7px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .sources { margin-top: 22px; padding: 18px 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.75; }
+    .sources a { color: #a9c9ff; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } header { display: block; } .intro { margin-top: 14px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><p class="eyebrow">PawPilot · UI direction board</p><h1>宠物健康饮水喂食站<br />三种风格候选</h1></div>
+      <p class="intro">基于 GitHub 高星 UI 项目的共同方法做出的方向比较：信息优先、状态清晰、操作反馈即时。图中数据与原型页面保持一致。</p>
+    </header>
+    <section class="grid" aria-label="三种界面风格渲染图">
+      <figure><img src="pet-health-feeder-shadcn.svg" alt="极简深色主题渲染图" /><figcaption><div class="label"><h2>极简深色</h2><span class="fit">科技感优先</span></div><p>借鉴 shadcn/ui 与 shadcn-admin：中性底色、窄边框和高对比状态，适合智能硬件控制台与大屏展示。</p></figcaption></figure>
+      <figure><img src="pet-health-feeder-warm.svg" alt="暖宠生活主题渲染图" /><figcaption><div class="label"><h2>暖宠生活</h2><span class="fit">已选 · 最终版</span></div><p>保留数据层级，同时用暖色和宠物形象降低距离感，适合面向养宠家庭的 App、官网和课堂展示。</p></figcaption></figure>
+      <figure><img src="pet-health-feeder-ops.svg" alt="运营台白色主题渲染图" /><figcaption><div class="label"><h2>运营台白色</h2><span class="fit">监控效率优先</span></div><p>借鉴 Ant Design、MUI、Tabler 的运营台逻辑，强调扫描速度、告警优先级和持续监控。</p></figcaption></figure>
+    </section>
+    <p class="sources">参考项目：<a href="https://github.com/shadcn-ui/ui">shadcn/ui</a>、<a href="https://github.com/ant-design/ant-design">Ant Design</a>、<a href="https://github.com/mui/material-ui">MUI</a>、<a href="https://github.com/tabler/tabler">Tabler</a>、<a href="https://github.com/Lissy93/dashy">Dashy</a>。星数为检索时页面显示值，详见 <a href="pet-health-feeder-ui-references.md">参考说明</a>。</p>
+  </main>
+</body>
+</html>
